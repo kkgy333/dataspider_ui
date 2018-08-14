@@ -7,7 +7,7 @@ const asideMenuConfig = [
     path: '/',
   },
   {
-    name: '数据抽选',
+    name: '抽选历史',
     path: '/view',
   },
 ];

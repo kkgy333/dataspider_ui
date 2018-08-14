@@ -35,6 +35,12 @@ $prefixCls: 'home';
   .#{$prefixCls}-search {
     float: left;
   }
+
+  .#{$prefixCls}-input {
+    float: left;
+    margin-right: 10px;
+  }
+
   .#{$prefixCls}-header {
     margin-bottom: 30px;
   }

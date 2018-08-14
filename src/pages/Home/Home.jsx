@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Button, Table, Dialog, Pagination } from '@icedesign/base';
+import { Search, Button, Table, Dialog, Pagination,Input,Loading } from '@icedesign/base';
 import './Home.scss';
+import axios from 'axios';
 
 const { Column } = Table;
 const clsPrefix = 'home';
-const PAGESIZE = 10;
+const PAGESIZE = 12;
 // TODO: 替换成自己的数据
-const fields = ['id', 'id1', 'name1', 'name2', 'name3', 'name4', 'name5'];
+const fields = ['id', 'ageinsname', 'ageinstypename', 'ecotypename', 'areaname', 'tel'];
 const dataSourceBak = new Array(10).join(',').split(',').map((value, i) => {
   const res = {};
   fields.forEach((key) => {
@@ -16,17 +17,6 @@ const dataSourceBak = new Array(10).join(',').split(',').map((value, i) => {
   return res;
 });
 
-const Fetch = () => new Promise((resolve) => {
-  setTimeout(() => {
-    resolve({
-      code: 200,
-      content: {
-        total: 88,
-        dataSource: dataSourceBak,
-      },
-    });
-  }, 1000);
-});
 
 class Home extends Component {
   constructor(props) {
@@ -37,14 +27,29 @@ class Home extends Component {
       dataSource: [],
       current: 1,
       total: 0,
+      isLoading:false
     };
     // 输入框
     this.value = '';
+    this.name ='';
   }
 
   componentDidMount() {
     this.getData(1, true);
+    this.getCount();
   }
+
+  getCount(){
+    axios({
+      method: 'get',
+      url: '/api/count'}).then((response) => {
+      const { data } = response;
+      this.setState({
+        count: data
+      });
+    });
+  }
+
 
   getData(page = 1, isInit = false) {
     // 分页参数
@@ -52,6 +57,7 @@ class Home extends Component {
       page,
       pageSize: PAGESIZE,
       value: this.value,
+      name:this.name
     };
 
     if (!isInit) {
@@ -60,17 +66,36 @@ class Home extends Component {
       });
     }
 
-    Fetch().then((data) => {
-      if (data.code === 200) {
-        const { content } = data;
-        this.setState({
-          dataSource: content.dataSource,
-          isTableLoading: false,
-          total: content.total,
-          current: page,
-        });
-      }
+    axios({
+      method: 'post',
+      url: '/api/getAgencyList',
+      data: {
+        current: page,
+        pageSize: PAGESIZE,
+        extension:{name:paginationParams.name,area:paginationParams.value}
+      }}).then((response) => {
+      const { data } = response;
+      this.setState({
+        dataSource: data.records,
+        isTableLoading: false,
+        total: data.total,
+        current: page,
+      });
     });
+    // Fetch().then((data) => {
+    //   if (data.code === 200) {
+    //     const { content } = data;
+    //     this.setState({
+    //       dataSource: content.dataSource,
+    //       isTableLoading: false,
+    //       total: content.total,
+    //       current: page,
+    //     });
+    //
+    //     alert(JSON.stringify(content.dataSource));
+    //
+    //   }
+    // });
   }
 
   onClickView = () => {
@@ -108,11 +133,49 @@ class Home extends Component {
 
   onSearch = () => {
     this.value = this.state.value;
+    this.name = this.state.name;
     this.getData(1);
   }
 
   onInputChange = (value) => {
     this.setState({ value });
+  }
+
+  onNameChange = (name) => {
+    this.setState({ name });
+  }
+
+
+  onSynchronous = ()=>{
+    this.setState({
+      isLoading: true
+    });
+    axios({
+      method: 'get',
+      url: '/api/start'}).then((response) => {
+      this.setState({
+        isLoading: false
+      });
+      this.getData(1, true);
+      this.getCount();
+    });
+  }
+  onSelected = ()=>{
+    const params = { // eslint-disable-line
+      value: this.value,
+      name:this.name
+    };
+
+    axios({
+      method: 'post',
+      url: '/api/extractingAgency',
+      data: {
+        name:params.name,
+        area:params.value
+      }}).then((response) => {
+      const { data } = response;
+      alert(JSON.stringify(data));
+    });
   }
 
   renderStatus = () => {
@@ -132,26 +195,28 @@ class Home extends Component {
   }
 
   render() {
-    const { value, isTableLoading, visible, total, current, dataSource } = this.state;
+    const { value,name, isTableLoading, visible, total, current, dataSource,count, isLoading} = this.state;
 
     return (
+      <Loading visible={isLoading} shape="fusion-reactor" tip="正在同步数据...">
       <div className={`page-${clsPrefix}`}>
-        <div className="navigation-label">登记入库：355 家</div>
+
+        <div className="navigation-label">登记入库：{count} 家</div>
         <div className={`${clsPrefix}-main`}>
           <div className={`${clsPrefix}-header clearfix`}>
+            <Input hasClear  className={`${clsPrefix}-input`} value={name}  onChange={this.onNameChange}
+                   onSearch={this.onSearch} placeholder="输入您要搜索的代理机构名称" inputWidth={300}/>
             <Search
               inputWidth={300}
               searchText=""
-              placeholder="输入您要搜索的代理机构名称/所在地"
+              placeholder="输入您要搜索的所在地"
               className={`${clsPrefix}-search`}
               value={value}
               onChange={this.onInputChange}
               onSearch={this.onSearch}
             />
-            <Link to="/edit">
-              <Button className={`${clsPrefix}-new`}>同步数据</Button>
-              <Button className={`${clsPrefix}-new`}>数据抽选</Button>
-            </Link>
+              <Button className={`${clsPrefix}-new`} onClick={this.onSynchronous}>同步数据</Button>
+              <Button className={`${clsPrefix}-new`} onClick={this.onSelected}>数据抽选</Button>
           </div>
           <Dialog
             title="查看详情"
@@ -170,13 +235,11 @@ class Home extends Component {
             className="rhino-table"
           >
             <Column title="ID" dataIndex="id" />
-            <Column title="代理机构名称" dataIndex="id1" />
-            <Column title="机构类型" dataIndex="name1" />
-            <Column title="经济性质" dataIndex="name2" />
-            <Column title="所在地" dataIndex="name3" />
-            <Column title="联系" dataIndex="name4" />
-            <Column title="状态3" dataIndex="name5" />
-            <Column title="操作" cell={this.renderStatus} width={200} />
+            <Column title="代理机构名称" dataIndex="ageinsname" />
+            <Column title="机构类型" dataIndex="ageinstypename" />
+            <Column title="经济性质" dataIndex="ecotypename" />
+            <Column title="所在地" dataIndex="areaname" />
+            <Column title="联系" dataIndex="tel" />
           </Table>
         </div>
         <div className={`${clsPrefix}-pagination-right`}>
@@ -190,6 +253,7 @@ class Home extends Component {
           />
         </div>
       </div>
+      </Loading>
     );
   }
 }
