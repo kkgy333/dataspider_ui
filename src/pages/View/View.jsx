@@ -2,28 +2,61 @@
  * 行业级设备模型查看页
  */
 import React, { Component } from 'react';
-import { Table, Dialog, Breadcrumb } from '@icedesign/base';
+import { Table, Dialog, Breadcrumb,Pagination } from '@icedesign/base';
 import FormView from '../../components/FormView';
 import {
   formConfig,
   mockFormData,
-  mockTableData,
   dialogFormConfig,
 } from './const';
 import './View.scss';
+import axios from "axios/index";
 
 const { Column } = Table;
 const clsPrefix = 'view';
-
+const PAGESIZE = 12;
 class DeviceModelView extends Component {
   constructor(props) {
     super(props);
     this.state = {
       visible: false,
       formData: mockFormData,
-      tableData: mockTableData,
+      dataSource: [],
       dialogData: {},
+      isTableLoading: true
     };
+  }
+  componentDidMount() {
+    this.getData(1, true);
+  }
+  getData(page = 1, isInit = false) {
+    // 分页参数
+    const paginationParams = { // eslint-disable-line
+      page,
+      pageSize: PAGESIZE
+    };
+
+    if (!isInit) {
+      this.setState({
+        isTableLoading: true
+      });
+    }
+
+    axios({
+      method: 'post',
+      url: '/api/getExtractingLogList',
+      data: {
+        current: page,
+        pageSize: PAGESIZE
+      }}).then((response) => {
+      const { data } = response;
+      this.setState({
+        dataSource: data.records,
+        isTableLoading: false,
+        total: data.total,
+        current: page,
+      });
+    });
   }
 
   onClickView = (value) => {
@@ -45,8 +78,12 @@ class DeviceModelView extends Component {
     });
   }
 
+  onPaginationChange = (page) => {
+    this.getData(page);
+  }
+
   renderStatus = (value, index, record) => {
-    const view = <a href="javascrpt:void(0)" onClick={this.onClickView.bind(this, record)}>查看</a>;
+    const view = <a href="javascript:void(0);" target="_blank" onClick={this.onClickView.bind(this, record)}>查看</a>;
     return (
       <div>
         {view}
@@ -55,7 +92,7 @@ class DeviceModelView extends Component {
   }
 
   render() {
-    const { formData, tableData, visible, dialogData } = this.state;
+    const { formData, dataSource, visible, dialogData, current, total,isTableLoading} = this.state;
     return (
       <div className={`page-${clsPrefix}`}>
         <Dialog
@@ -80,24 +117,31 @@ class DeviceModelView extends Component {
           <Breadcrumb.Item>查看详情</Breadcrumb.Item>
         </Breadcrumb>
         <div className={`page-${clsPrefix}-content`}>
-          <h2 className="section-title">基础信息</h2>
-          <div className={`page-${clsPrefix}-content-item`}>
-            <FormView config={formConfig} data={formData} />
-          </div>
-          <h2 className="section-title">基础列表信息</h2>
           <div className={`page-${clsPrefix}-content-item`}>
             <Table
               hasBorder={false}
               isZebra={false}
-              dataSource={tableData}
+              dataSource={dataSource}
+              isLoading={isTableLoading}
               className="rhino-table"
             >
-              <Column title="类型" dataIndex="typeName" />
-              <Column title="名称" dataIndex="name" />
-              <Column title="标识符" dataIndex="identifier" />
-              <Column title="描述" dataIndex="desc" />
+              <Column title="代理机构名称" dataIndex="ageinsname" />
+              <Column title="机构类型" dataIndex="ageinstypename" />
+              <Column title="经济性质" dataIndex="ecotypename" />
+              <Column title="所在地" dataIndex="areaname" />
+              <Column title="联系" dataIndex="tel" />
               <Column title="操作" cell={this.renderStatus} width={200} />
             </Table>
+          </div>
+          <div className={`${clsPrefix}-pagination-right`}>
+            <Pagination
+              current={current}
+              onChange={this.onPaginationChange}
+              total={total}
+              pageSize={PAGESIZE}
+              hideOnlyOnePage
+              shape="arrow-prev-only"
+            />
           </div>
         </div>
       </div>

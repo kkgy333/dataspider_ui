@@ -41,16 +41,18 @@ export const formConfig = {
 
 export const dialogFormConfig = {
   rows: [
-    ['typeName'],
-    ['name'],
-    ['identifier'],
-    ['desc'],
+    ['ageinsname'],
+    ['ageinstypename'],
+    ['ecotypename'],
+    ['areaname'],
+    ['tel']
   ],
   labels: {
-    typeName: '功能类型',
-    name: '功能名称',
-    identifier: '标示符',
-    desc: '描述',
+    ageinsname: '代理机构名称',
+    ageinstypename: '机构类型',
+    ecotypename: '经济性质',
+    areaname: '所在地',
+    tel:'联系'
   },
 };
 
