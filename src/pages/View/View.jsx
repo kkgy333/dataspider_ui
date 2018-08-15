@@ -1,16 +1,16 @@
+/* eslint-disable no-script-url */
 /**
  * 行业级设备模型查看页
  */
 import React, { Component } from 'react';
-import { Table, Dialog, Breadcrumb,Pagination } from '@icedesign/base';
+import { Table, Dialog, Breadcrumb, Pagination } from '@icedesign/base';
 import FormView from '../../components/FormView';
 import {
   formConfig,
-  mockFormData,
   dialogFormConfig,
 } from './const';
 import './View.scss';
-import axios from "axios/index";
+import axios from 'axios/index';
 
 const { Column } = Table;
 const clsPrefix = 'view';
@@ -20,10 +20,10 @@ class DeviceModelView extends Component {
     super(props);
     this.state = {
       visible: false,
-      formData: mockFormData,
+
       dataSource: [],
       dialogData: {},
-      isTableLoading: true
+      isTableLoading: true,
     };
   }
   componentDidMount() {
@@ -33,12 +33,12 @@ class DeviceModelView extends Component {
     // 分页参数
     const paginationParams = { // eslint-disable-line
       page,
-      pageSize: PAGESIZE
+      pageSize: PAGESIZE,
     };
 
     if (!isInit) {
       this.setState({
-        isTableLoading: true
+        isTableLoading: true,
       });
     }
 
@@ -47,8 +47,8 @@ class DeviceModelView extends Component {
       url: '/api/getExtractingLogList',
       data: {
         current: page,
-        pageSize: PAGESIZE
-      }}).then((response) => {
+        pageSize: PAGESIZE,
+      } }).then((response) => {
       const { data } = response;
       this.setState({
         dataSource: data.records,
@@ -63,6 +63,21 @@ class DeviceModelView extends Component {
     this.setState({
       visible: true,
       dialogData: value,
+    });
+  };
+
+  onClickDelete = (value) => {
+    axios({
+      method: 'post',
+      url: '/api/deleteExtractingLog',
+      data: {
+        id: value.extractId,
+      } }).then((response) => {
+      const { data } = response;
+      if (data) {
+        alert('删除成功！');
+        this.getData(this.state.current);
+      }
     });
   };
 
@@ -84,26 +99,29 @@ class DeviceModelView extends Component {
 
   renderStatus = (value, index, record) => {
     const view = <a href="javascript:void(0);" target="_blank" onClick={this.onClickView.bind(this, record)}>查看</a>;
+    const deleted = <a href="javascript:void(0);" target="_blank" onClick={this.onClickDelete.bind(this, record)}>删除</a>;
     return (
       <div>
         {view}
+        <span className="actions-split">|</span>
+        {deleted}
       </div>
     );
   }
 
   render() {
-    const { formData, dataSource, visible, dialogData, current, total,isTableLoading} = this.state;
+    const { dataSource, visible, dialogData, current, total, isTableLoading } = this.state;
     return (
       <div className={`page-${clsPrefix}`}>
         <Dialog
           visible={visible}
-          title="查看详情"
+          title="机构详情"
           footer={false}
           onOk={this.onOk}
           onCancel={this.onCancel}
           onClose={this.onCancel}
           style={{
-            width: '400px',
+            width: '650px',
           }}
         >
           <FormView
@@ -112,10 +130,6 @@ class DeviceModelView extends Component {
             config={dialogFormConfig}
           />
         </Dialog>
-        <Breadcrumb>
-          <Breadcrumb.Item link="/">型号管理</Breadcrumb.Item>
-          <Breadcrumb.Item>查看详情</Breadcrumb.Item>
-        </Breadcrumb>
         <div className={`page-${clsPrefix}-content`}>
           <div className={`page-${clsPrefix}-content-item`}>
             <Table
@@ -130,6 +144,7 @@ class DeviceModelView extends Component {
               <Column title="经济性质" dataIndex="ecotypename" />
               <Column title="所在地" dataIndex="areaname" />
               <Column title="联系" dataIndex="tel" />
+              <Column title="抽选时间" dataIndex="extractTime" />
               <Column title="操作" cell={this.renderStatus} width={200} />
             </Table>
           </div>

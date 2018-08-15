@@ -1,22 +1,16 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Button, Table, Dialog, Pagination,Input,Loading } from '@icedesign/base';
+import { Search, Button, Table, Dialog, Pagination, Input, Loading } from '@icedesign/base';
+import FormView from '../../components/FormView';
 import './Home.scss';
 import axios from 'axios';
+import {
+  dialogFormConfig,
+} from '../View/const';
 
 const { Column } = Table;
 const clsPrefix = 'home';
 const PAGESIZE = 12;
-// TODO: 替换成自己的数据
-const fields = ['id', 'ageinsname', 'ageinstypename', 'ecotypename', 'areaname', 'tel'];
-const dataSourceBak = new Array(10).join(',').split(',').map((value, i) => {
-  const res = {};
-  fields.forEach((key) => {
-    res[key] = `${key}-${i}`;
-  });
-  return res;
-});
-
 
 class Home extends Component {
   constructor(props) {
@@ -27,11 +21,13 @@ class Home extends Component {
       dataSource: [],
       current: 1,
       total: 0,
-      isLoading:false
+      isLoading: false,
+      dialogData: {},
+      dialogTitle: '查看详情',
     };
     // 输入框
     this.value = '';
-    this.name ='';
+    this.name = '';
   }
 
   componentDidMount() {
@@ -39,13 +35,13 @@ class Home extends Component {
     this.getCount();
   }
 
-  getCount(){
+  getCount() {
     axios({
       method: 'get',
-      url: '/api/count'}).then((response) => {
+      url: '/api/count' }).then((response) => {
       const { data } = response;
       this.setState({
-        count: data
+        count: data,
       });
     });
   }
@@ -57,7 +53,7 @@ class Home extends Component {
       page,
       pageSize: PAGESIZE,
       value: this.value,
-      name:this.name
+      name: this.name,
     };
 
     if (!isInit) {
@@ -72,8 +68,8 @@ class Home extends Component {
       data: {
         current: page,
         pageSize: PAGESIZE,
-        extension:{name:paginationParams.name,area:paginationParams.value}
-      }}).then((response) => {
+        extension: { name: paginationParams.name, area: paginationParams.value },
+      } }).then((response) => {
       const { data } = response;
       this.setState({
         dataSource: data.records,
@@ -146,113 +142,131 @@ class Home extends Component {
   }
 
 
-  onSynchronous = ()=>{
+  onSynchronous = () => {
     this.setState({
-      isLoading: true
+      isLoading: true,
     });
     axios({
       method: 'get',
-      url: '/api/start'}).then((response) => {
+      url: '/api/start' }).then(() => {
       this.setState({
-        isLoading: false
+        isLoading: false,
       });
       this.getData(1, true);
       this.getCount();
     });
   }
-  onSelected = ()=>{
+  onSelected = () => {
     const params = { // eslint-disable-line
       value: this.value,
-      name:this.name
+      name: this.name,
     };
 
     axios({
       method: 'post',
       url: '/api/extractingAgency',
       data: {
-        name:params.name,
-        area:params.value
-      }}).then((response) => {
+        name: params.name,
+        area: params.value,
+      } }).then((response) => {
       const { data } = response;
-      alert(JSON.stringify(data));
+      this.setState({
+        dialogTitle: '抽选结果',
+        visible: true,
+        dialogData: data,
+      });
     });
   }
+  onClickView = (value) => {
+    this.setState({
+      dialogTitle: '机构详情',
+      visible: true,
+      dialogData: value,
+    });
+  };
 
-  renderStatus = () => {
-    const splitSpan = <span className="actions-split">|</span>;
-    const view = <Link to="view">查看</Link>;
-    const deleteItem = <a href="javascrpt:void(0)" onClick={this.onClickDelete}>删除</a>;
-    const edit = <Link to="edit">编辑</Link>;
+  renderStatus = (value, index, record) => {
+    const view = <a href="javascript:void(0);" target="_blank" onClick={this.onClickView.bind(this, record)}>查看</a>;
     return (
       <div>
         {view}
-        {splitSpan}
-        {deleteItem}
-        {splitSpan}
-        {edit}
       </div>
     );
   }
 
   render() {
-    const { value,name, isTableLoading, visible, total, current, dataSource,count, isLoading} = this.state;
+    const { value, name, isTableLoading, visible, total, current, dataSource, count, isLoading, dialogData, dialogTitle } = this.state;
 
     return (
       <Loading visible={isLoading} shape="fusion-reactor" tip="正在同步数据...">
-      <div className={`page-${clsPrefix}`}>
+        <div className={`page-${clsPrefix}`}>
 
-        <div className="navigation-label">登记入库：{count} 家</div>
-        <div className={`${clsPrefix}-main`}>
-          <div className={`${clsPrefix}-header clearfix`}>
-            <Input hasClear  className={`${clsPrefix}-input`} value={name}  onChange={this.onNameChange}
-                   onSearch={this.onSearch} placeholder="输入您要搜索的代理机构名称" inputWidth={300}/>
-            <Search
-              inputWidth={300}
-              searchText=""
-              placeholder="输入您要搜索的所在地"
-              className={`${clsPrefix}-search`}
-              value={value}
-              onChange={this.onInputChange}
-              onSearch={this.onSearch}
-            />
+          <div className="navigation-label">登记入库：{count} 家</div>
+          <div className={`${clsPrefix}-main`}>
+            <div className={`${clsPrefix}-header clearfix`}>
+              <Input hasClear
+                className={`${clsPrefix}-input`}
+                value={name}
+                onChange={this.onNameChange}
+                onSearch={this.onSearch}
+                placeholder="输入您要搜索的代理机构名称"
+                inputWidth={300}
+              />
+              <Search
+                inputWidth={300}
+                searchText=""
+                placeholder="输入您要搜索的所在地"
+                className={`${clsPrefix}-search`}
+                value={value}
+                onChange={this.onInputChange}
+                onSearch={this.onSearch}
+              />
               <Button className={`${clsPrefix}-new`} onClick={this.onSynchronous}>同步数据</Button>
               <Button className={`${clsPrefix}-new`} onClick={this.onSelected}>数据抽选</Button>
+            </div>
+            <Dialog
+              title={dialogTitle}
+              footer={false}
+              onOk={this.onOk}
+              onCancel={this.onCancel}
+              visible={visible}
+              onClose={this.onCancel}
+              style={{
+                width: '650px',
+              }}
+            >
+              <FormView
+                colspanType={[[6, 18]]}
+                data={dialogData}
+                config={dialogFormConfig}
+              />
+            </Dialog>
+            <Table
+              hasBorder={false}
+              isZebra={false}
+              dataSource={dataSource}
+              isLoading={isTableLoading}
+              className="rhino-table"
+            >
+              <Column title="代理机构名称" dataIndex="ageinsname" />
+              <Column title="机构类型" dataIndex="ageinstypename" />
+              <Column title="经济性质" dataIndex="ecotypename" />
+              <Column title="所在地" dataIndex="areaname" />
+              <Column title="联系" dataIndex="tel" />
+              <Column title="操作" cell={this.renderStatus} width={200} />
+            </Table>
           </div>
-          <Dialog
-            title="查看详情"
-            onOk={this.onOk}
-            onCancel={this.onCancel}
-            visible={visible}
-            onClose={this.onCancel}
-          >
-            <div style={{ width: '400px' }}>详情页面自行编辑</div>
-          </Dialog>
-          <Table
-            hasBorder={false}
-            isZebra={false}
-            dataSource={dataSource}
-            isLoading={isTableLoading}
-            className="rhino-table"
-          >
-            <Column title="ID" dataIndex="id" />
-            <Column title="代理机构名称" dataIndex="ageinsname" />
-            <Column title="机构类型" dataIndex="ageinstypename" />
-            <Column title="经济性质" dataIndex="ecotypename" />
-            <Column title="所在地" dataIndex="areaname" />
-            <Column title="联系" dataIndex="tel" />
-          </Table>
+          <div className={`${clsPrefix}-pagination-right`}>
+            <Pagination
+              current={current}
+              onChange={this.onPaginationChange}
+              total={total}
+              pageSize={PAGESIZE}
+              hideOnlyOnePage
+              shape="arrow-prev-only"
+            />
+          </div>
         </div>
-        <div className={`${clsPrefix}-pagination-right`}>
-          <Pagination
-            current={current}
-            onChange={this.onPaginationChange}
-            total={total}
-            pageSize={PAGESIZE}
-            hideOnlyOnePage
-            shape="arrow-prev-only"
-          />
-        </div>
-      </div>
       </Loading>
     );
   }

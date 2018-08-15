@@ -14,7 +14,7 @@ export default class Logo extends Component {
           <span
             className="logo-img"
           >
-            LOGO
+            SYS
           </span>
           <div className="logo-description">
             <span className="logo-description-workbench">代理机构</span>
