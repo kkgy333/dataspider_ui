@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Button, Table, Dialog, Pagination, Input, Loading } from '@icedesign/base';
+
 import FormView from '../../components/FormView';
 import './Home.scss';
 import axios from 'axios';
@@ -195,6 +196,7 @@ class Home extends Component {
   }
 
   render() {
+
     const { value, name, isTableLoading, visible, total, current, dataSource, count, isLoading, dialogData, dialogTitle } = this.state;
 
     return (
