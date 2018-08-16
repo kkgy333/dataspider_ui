@@ -38,7 +38,7 @@ class Home extends Component {
   getCount() {
     axios({
       method: 'get',
-      url: '/dataspider/api/count' }).then((response) => {
+      url: 'api/count' }).then((response) => {
       const { data } = response;
       this.setState({
         count: data,
@@ -64,7 +64,7 @@ class Home extends Component {
 
     axios({
       method: 'post',
-      url: '/dataspider/api/getAgencyList',
+      url: 'api/getAgencyList',
       data: {
         current: page,
         pageSize: PAGESIZE,
@@ -148,7 +148,7 @@ class Home extends Component {
     });
     axios({
       method: 'get',
-      url: '/dataspider/api/start' }).then(() => {
+      url: 'api/start' }).then(() => {
       this.setState({
         isLoading: false,
       });
@@ -164,7 +164,7 @@ class Home extends Component {
 
     axios({
       method: 'post',
-      url: '/dataspider/api/extractingAgency',
+      url: 'api/extractingAgency',
       data: {
         name: params.name,
         area: params.value,

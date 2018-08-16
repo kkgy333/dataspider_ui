@@ -44,7 +44,7 @@ class DeviceModelView extends Component {
 
     axios({
       method: 'post',
-      url: '/dataspider/api/getExtractingLogList',
+      url: 'api/getExtractingLogList',
       data: {
         current: page,
         pageSize: PAGESIZE,
@@ -69,7 +69,7 @@ class DeviceModelView extends Component {
   onClickDelete = (value) => {
     axios({
       method: 'post',
-      url: '/dataspider/api/deleteExtractingLog',
+      url: 'api/deleteExtractingLog',
       data: {
         id: value.extractId,
       } }).then((response) => {
