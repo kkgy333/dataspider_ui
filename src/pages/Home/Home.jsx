@@ -28,7 +28,7 @@ class Home extends Component {
     };
     // 输入框
     this.value = '';
-    this.name = '';
+    //this.name = '';
   }
 
   componentDidMount() {
@@ -54,7 +54,7 @@ class Home extends Component {
       page,
       pageSize: PAGESIZE,
       value: this.value,
-      name: this.name,
+      //name: this.name,
     };
 
     if (!isInit) {
@@ -69,7 +69,7 @@ class Home extends Component {
       data: {
         current: page,
         pageSize: PAGESIZE,
-        extension: { name: paginationParams.name, area: paginationParams.value },
+        extension: { areacode: '150100', opeadd: paginationParams.value },
       } }).then((response) => {
       const { data } = response;
       this.setState({
@@ -130,7 +130,7 @@ class Home extends Component {
 
   onSearch = () => {
     this.value = this.state.value;
-    this.name = this.state.name;
+    // this.name = this.state.name;
     this.getData(1);
   }
 
@@ -160,7 +160,7 @@ class Home extends Component {
   onSelected = () => {
     const params = { // eslint-disable-line
       value: this.value,
-      name: this.name,
+      //name: this.name,
     };
 
     axios({
@@ -203,21 +203,21 @@ class Home extends Component {
       <Loading visible={isLoading} shape="fusion-reactor" tip="正在同步数据...">
         <div className={`page-${clsPrefix}`}>
 
-          <div className="navigation-label">登记入库：{count} 家</div>
+          <div className="navigation-label">登记入库：{count} 家，当前查询：{total} 家</div>
           <div className={`${clsPrefix}-main`}>
             <div className={`${clsPrefix}-header clearfix`}>
-              <Input hasClear
-                className={`${clsPrefix}-input`}
-                value={name}
-                onChange={this.onNameChange}
-                onSearch={this.onSearch}
-                placeholder="输入您要搜索的代理机构名称"
-                inputWidth={300}
-              />
+              {/*<Input hasClear*/}
+                {/*className={`${clsPrefix}-input`}*/}
+                {/*value={name}*/}
+                {/*onChange={this.onNameChange}*/}
+                {/*onSearch={this.onSearch}*/}
+                {/*placeholder="输入您要搜索的代理机构名称"*/}
+                {/*inputWidth={300}*/}
+              {/*/>*/}
               <Search
                 inputWidth={300}
                 searchText=""
-                placeholder="输入您要搜索的所在地"
+                placeholder="输入您要搜索的所在地址"
                 className={`${clsPrefix}-search`}
                 value={value}
                 onChange={this.onInputChange}
@@ -252,7 +252,7 @@ class Home extends Component {
             >
               <Column title="代理机构名称" dataIndex="ageinsname" />
               <Column title="机构类型" dataIndex="ageinstypename" />
-              <Column title="经济性质" dataIndex="ecotypename" />
+              <Column title="注册资本" dataIndex="regfunamout" />
               <Column title="所在地" dataIndex="areaname" />
               <Column title="联系" dataIndex="tel" />
               <Column title="操作" cell={this.renderStatus} width={200} />

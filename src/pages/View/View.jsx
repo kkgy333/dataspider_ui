@@ -141,7 +141,7 @@ class DeviceModelView extends Component {
             >
               <Column title="代理机构名称" dataIndex="ageinsname" />
               <Column title="机构类型" dataIndex="ageinstypename" />
-              <Column title="经济性质" dataIndex="ecotypename" />
+              <Column title="注册资本" dataIndex="regfunamout" />
               <Column title="所在地" dataIndex="areaname" />
               <Column title="联系" dataIndex="tel" />
               <Column title="抽选时间" dataIndex="extractTime" />
