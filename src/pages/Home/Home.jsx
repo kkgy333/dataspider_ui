@@ -16,6 +16,9 @@ const PAGESIZE = 12;
 class Home extends Component {
   constructor(props) {
     super(props);
+    // 输入框
+    this.value = '呼和浩特';
+    //this.name = '';
     this.state = {
       isTableLoading: true,
       visible: false,
@@ -25,10 +28,8 @@ class Home extends Component {
       isLoading: false,
       dialogData: {},
       dialogTitle: '查看详情',
+      value:this.value,
     };
-    // 输入框
-    this.value = '';
-    //this.name = '';
   }
 
   componentDidMount() {
@@ -69,7 +70,7 @@ class Home extends Component {
       data: {
         current: page,
         pageSize: PAGESIZE,
-        extension: { areacode: '150100', opeadd: paginationParams.value },
+        extension: { opeadd: paginationParams.value },
       } }).then((response) => {
       const { data } = response;
       this.setState({
@@ -252,7 +253,7 @@ class Home extends Component {
             >
               <Column title="代理机构名称" dataIndex="ageinsname" />
               <Column title="机构类型" dataIndex="ageinstypename" />
-              <Column title="注册资本" dataIndex="regfunamout" />
+              <Column title="注册资本（万元）" dataIndex="regfunamout" />
               <Column title="所在地" dataIndex="areaname" />
               <Column title="联系" dataIndex="tel" />
               <Column title="操作" cell={this.renderStatus} width={200} />
