@@ -168,8 +168,7 @@ class Home extends Component {
       method: 'post',
       url: 'api/extractingAgency',
       data: {
-        name: params.name,
-        area: params.value,
+        opeadd: params.value,
       } }).then((response) => {
       const { data } = response;
       this.setState({
