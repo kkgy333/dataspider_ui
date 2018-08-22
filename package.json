@@ -7,6 +7,7 @@
     "@icedesign/base": "^0.2.4",
     "@icedesign/container": "^0.1.2",
     "@icedesign/data-binder": "^0.1.6",
+    "@icedesign/form-binder": "^0.1.7",
     "@icedesign/img": "^0.1.0",
     "@icedesign/layout": "^0.1.0",
     "@icedesign/menu": "^0.1.0",

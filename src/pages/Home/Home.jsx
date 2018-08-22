@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Button, Table, Dialog, Pagination, Input, Loading } from '@icedesign/base';
-
+import {
+  FormBinderWrapper,
+  FormBinder,
+  FormError,
+} from '@icedesign/form-binder';
 import FormView from '../../components/FormView';
 import './Home.scss';
 import axios from 'axios';
 import {
   dialogFormConfig,
-} from '../View/const';
+} from '../Home/const';
 
 const { Column } = Table;
 const clsPrefix = 'home';
@@ -21,14 +25,17 @@ class Home extends Component {
     //this.name = '';
     this.state = {
       isTableLoading: true,
-      visible: false,
+      extractVisible: false,
+      projectVisible: false,
       dataSource: [],
       current: 1,
       total: 0,
       isLoading: false,
       dialogData: {},
       dialogTitle: '查看详情',
-      value:this.value,
+      value: this.value,
+      projectNameValue: '',
+      projectPersonValue: '',
     };
   }
 
@@ -98,7 +105,7 @@ class Home extends Component {
 
   onClickView = () => {
     this.setState({
-      visible: true,
+      extractVisible: true,
     });
   }
 
@@ -119,13 +126,13 @@ class Home extends Component {
 
   onOk = () => {
     this.setState({
-      visible: false,
+      extractVisible: false,
     });
   }
 
   onCancel = () => {
     this.setState({
-      visible: false,
+      extractVisible: false,
     });
   }
 
@@ -138,12 +145,6 @@ class Home extends Component {
   onInputChange = (value) => {
     this.setState({ value });
   }
-
-  onNameChange = (name) => {
-    this.setState({ name });
-  }
-
-
   onSynchronous = () => {
     this.setState({
       isLoading: true,
@@ -163,27 +164,62 @@ class Home extends Component {
       value: this.value,
       //name: this.name,
     };
+    this.setState({
+      projectVisible: true,
+    });
 
+  }
+
+
+  onProjectOk = () => {
+    const params = { // eslint-disable-line
+      value: this.value,
+      projectName: this.state.projectNameValue,
+      projectPerson: this.state.projectPersonValue,
+    };
+    this.setState({
+      projectVisible: false,
+    });
     axios({
       method: 'post',
       url: 'api/extractingAgency',
       data: {
         opeadd: params.value,
+        projectname: params.projectName,
+        projectperson: params.projectPerson,
       } }).then((response) => {
       const { data } = response;
       this.setState({
         dialogTitle: '抽选结果',
-        visible: true,
+        extractVisible: true,
         dialogData: data,
       });
+    });
+  }
+
+  onProjectCancel = () => {
+    this.setState({
+      projectVisible: false,
     });
   }
   onClickView = (value) => {
     this.setState({
       dialogTitle: '机构详情',
-      visible: true,
+      extractVisible: true,
       dialogData: value,
     });
+  };
+  onProjectNameChange = (projectNameValue) => {
+    this.setState({ projectNameValue });
+  }
+
+  onProjectPersonChange = (projectPersonValue) => {
+    this.setState({ projectPersonValue });
+  }
+
+
+  formChange = (value) => {
+    console.log(value);
   };
 
   renderStatus = (value, index, record) => {
@@ -197,7 +233,7 @@ class Home extends Component {
 
   render() {
 
-    const { value, name, isTableLoading, visible, total, current, dataSource, count, isLoading, dialogData, dialogTitle } = this.state;
+    const { value, projectNameValue, projectPersonValue, isTableLoading, extractVisible, total, current, dataSource, count, isLoading, dialogData, dialogTitle, projectVisible } = this.state;
 
     return (
       <Loading visible={isLoading} shape="fusion-reactor" tip="正在同步数据...">
@@ -231,7 +267,7 @@ class Home extends Component {
               footer={false}
               onOk={this.onOk}
               onCancel={this.onCancel}
-              visible={visible}
+              visible={extractVisible}
               onClose={this.onCancel}
               style={{
                 width: '650px',
@@ -242,6 +278,39 @@ class Home extends Component {
                 data={dialogData}
                 config={dialogFormConfig}
               />
+            </Dialog>
+
+            <Dialog
+              title="输入项目信息"
+              onOk={this.onProjectOk}
+              onCancel={this.onProjectCancel}
+              visible={projectVisible}
+              onClose={this.onProjectCancel}
+              style={{
+                width: '650px',
+              }}
+            >
+              <FormBinderWrapper
+                value={this.state.formValue}
+                onChange={this.formChange}
+              >
+                <div>
+                  <div style={styles.fromItem}>
+                    <span style={{ width: 70 }}>项目名称：</span>
+                    <FormBinder name="name" required max={10} message="不能为空">
+                      <Input style={{ width: 500 }} value={projectNameValue} onChange={this.onProjectNameChange} />
+                    </FormBinder>
+                  </div>
+                  <FormError style={{ marginLeft: 10 }} name="name" />
+                  <div style={styles.fromItem}>
+                    <span style={{ width: 70 }}>负责人：</span>
+                    <FormBinder name="avatar" required max={10} message="不能为空">
+                      <Input style={{ width: 500 }} value={projectPersonValue} onChange={this.onProjectPersonChange} />
+                    </FormBinder>
+                  </div>
+                  <FormError style={{ marginLeft: 10 }} name="avatar" />
+                </div>
+              </FormBinderWrapper>
             </Dialog>
             <Table
               hasBorder={false}
@@ -273,5 +342,33 @@ class Home extends Component {
     );
   }
 }
+
+const styles = {
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  title: {
+    fontSize: 20,
+    margin: 0,
+    paddingBottom: 20,
+  },
+  infoRow: {
+    padding: '16px 0',
+    display: 'flex',
+    borderBottom: '1px solid #f6f6f6',
+  },
+  infoLabel: {
+    flex: '0 0 100px',
+    color: '#999',
+  },
+  infoDetail: {},
+
+  fromItem: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    paddingBottom: 10,
+  },
+};
 
 export default Home;

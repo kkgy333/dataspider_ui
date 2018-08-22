@@ -140,11 +140,10 @@ class DeviceModelView extends Component {
               className="rhino-table"
             >
               <Column title="代理机构名称" dataIndex="ageinsname" />
-              <Column title="机构类型" dataIndex="ageinstypename" />
-              <Column title="注册资本（万元）" dataIndex="regfunamout" />
-              <Column title="所在地" dataIndex="areaname" />
-              <Column title="联系" dataIndex="tel" />
+              <Column title="联系电话" dataIndex="tel" />
               <Column title="抽选时间" dataIndex="extractTime" />
+              <Column title="项目名称" dataIndex="projectName" />
+              <Column title="负责人" dataIndex="projectPerson" />
               <Column title="操作" cell={this.renderStatus} width={200} />
             </Table>
           </div>

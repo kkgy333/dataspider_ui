@@ -1,0 +1,33 @@
+export const dialogFormConfig = {
+  rows: [
+    ['ageinsorgcode'],
+    ['ageinsname'],
+    ['ageinstypename'],
+    ['ecotypename'],
+    ['areaname'],
+    ['opeadd'],
+    ['zip'],
+    ['tel'],
+    ['fax'],
+    ['email'],
+    ['regdate'],
+    ['regfunamout'],
+    ['majorscope'],
+  ],
+  labels: {
+
+    ageinsorgcode: '统一社会信用代码/组织机构代码',
+    ageinsname: '代理机构名称',
+    ageinstypename: '机构类型',
+    ecotypename: '经济性质',
+    areaname: '所在地',
+    opeadd: '营业地址',
+    zip: '邮政编码',
+    tel: '电话',
+    fax: '传真',
+    email: '邮箱',
+    regdate: '成立日期',
+    regfunamout: '注册资本（万元）',
+    majorscope: '经营范围',
+  },
+};

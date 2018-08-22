@@ -5,14 +5,19 @@ import BaseLayout from './layouts/BaseLayout';
 import Home from './pages/Home';
 import ServerError from './pages/Exception/ServerError';
 import NotFound from './pages/Exception/NotFound';
-import Edit from './pages/Edit';
 import View from './pages/View';
+import Login from './pages/Login';
 
 const routerConfig = [
   {
     path: '/',
     layout: BaseLayout,
     component: Home,
+  },
+  {
+    path: '/login',
+    layout: BaseLayout,
+    component: Login,
   },
   {
     path: '/view',
