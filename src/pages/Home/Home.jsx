@@ -22,7 +22,7 @@ class Home extends Component {
     super(props);
     // 输入框
     this.value = '呼和浩特';
-    //this.name = '';
+    // this.name = '';
     this.state = {
       isTableLoading: true,
       extractVisible: false,
@@ -62,7 +62,7 @@ class Home extends Component {
       page,
       pageSize: PAGESIZE,
       value: this.value,
-      //name: this.name,
+      // name: this.name,
     };
 
     if (!isInit) {
@@ -162,12 +162,11 @@ class Home extends Component {
   onSelected = () => {
     const params = { // eslint-disable-line
       value: this.value,
-      //name: this.name,
+      // name: this.name,
     };
     this.setState({
       projectVisible: true,
     });
-
   }
 
 
@@ -232,7 +231,6 @@ class Home extends Component {
   }
 
   render() {
-
     const { value, projectNameValue, projectPersonValue, isTableLoading, extractVisible, total, current, dataSource, count, isLoading, dialogData, dialogTitle, projectVisible } = this.state;
 
     return (
@@ -242,14 +240,14 @@ class Home extends Component {
           <div className="navigation-label">登记入库：{count} 家，当前查询：{total} 家</div>
           <div className={`${clsPrefix}-main`}>
             <div className={`${clsPrefix}-header clearfix`}>
-              {/*<Input hasClear*/}
-                {/*className={`${clsPrefix}-input`}*/}
-                {/*value={name}*/}
-                {/*onChange={this.onNameChange}*/}
-                {/*onSearch={this.onSearch}*/}
-                {/*placeholder="输入您要搜索的代理机构名称"*/}
-                {/*inputWidth={300}*/}
-              {/*/>*/}
+              {/* <Input hasClear */}
+              {/* className={`${clsPrefix}-input`} */}
+              {/* value={name} */}
+              {/* onChange={this.onNameChange} */}
+              {/* onSearch={this.onSearch} */}
+              {/* placeholder="输入您要搜索的代理机构名称" */}
+              {/* inputWidth={300} */}
+              {/* /> */}
               <Search
                 inputWidth={300}
                 searchText=""

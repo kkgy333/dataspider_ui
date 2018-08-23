@@ -2,6 +2,7 @@
 // 你可以调整 routerConfig 里的内容
 // 变量名 routerConfig 为 iceworks 检测关键字，请不要修改名称
 import BaseLayout from './layouts/BaseLayout';
+import BlankLayout from './layouts/BlankLayout';
 import Home from './pages/Home';
 import ServerError from './pages/Exception/ServerError';
 import NotFound from './pages/Exception/NotFound';
@@ -13,16 +14,18 @@ const routerConfig = [
     path: '/',
     layout: BaseLayout,
     component: Home,
+    authority: 'admin',
   },
   {
     path: '/login',
-    layout: BaseLayout,
+    layout: BlankLayout,
     component: Login,
   },
   {
     path: '/view',
     component: View,
     layout: BaseLayout,
+    authority: 'admin',
   },
   {
     path: '/500-with-basic-layout',
@@ -31,7 +34,7 @@ const routerConfig = [
   },
   {
     path: '*',
-    layout: BaseLayout,
+    layout: BlankLayout,
     component: NotFound,
   },
 ];

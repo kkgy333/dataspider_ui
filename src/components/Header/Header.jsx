@@ -32,7 +32,7 @@ class Header extends React.Component {
 
     return (
       <div className="ice-admin-layout-header-top">
-        <span></span>
+        <span />
         <div
           style={{ display: 'flex' }}
         >

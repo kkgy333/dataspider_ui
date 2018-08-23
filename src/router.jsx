@@ -5,18 +5,22 @@ import { Switch, Route, HashRouter as Router } from 'react-router-dom';
 import React from 'react';
 
 import routerConfig from './routerConfig';
+import Authorized from './utils/Authorized';
 
+const { AuthorizedRoute } = Authorized;
 /**
  * 将路由信息扁平化，继承上一级路由的 path
  * @param {Array} config 路由配置
  */
 function recursiveRouterConfigV4(config = []) {
+
   const routeMap = [];
   config.forEach((item) => {
     const route = {
       path: item.path,
       layout: item.layout,
       component: item.component,
+      authority: item.authority,
     };
     if (Array.isArray(item.children)) {
       route.childRoutes = recursiveRouterConfigV4(item.children);
@@ -44,6 +48,7 @@ function recursiveRouterConfigV4(config = []) {
  */
 function renderRouterConfigV4(container, router, contextPath) {
   const routeChildren = [];
+
   const renderRoute = (routeContainer, routeItem, routeContextPath) => {
     let routePath;
     if (!routeItem.path) {
@@ -58,10 +63,12 @@ function renderRouterConfigV4(container, router, contextPath) {
     // 优先使用当前定义的 layout
     if (routeItem.layout && routeItem.component) {
       routeChildren.push(
-        <Route
+        <AuthorizedRoute
           key={routePath}
           exact
           path={routePath}
+          authority={routeItem.authority}
+          redirectPath="/login"
           render={(props) => {
             return React.createElement(
               routeItem.layout,
@@ -74,10 +81,12 @@ function renderRouterConfigV4(container, router, contextPath) {
     } else if (routeContainer && routeItem.component) {
       // 使用上层节点作为 container
       routeChildren.push(
-        <Route
+        <AuthorizedRoute
           key={routePath}
           exact
           path={routePath}
+          authority={routeItem.authority}
+          redirectPath="/login"
           render={(props) => {
             return React.createElement(
               routeContainer,
@@ -89,10 +98,12 @@ function renderRouterConfigV4(container, router, contextPath) {
       );
     } else {
       routeChildren.push(
-        <Route
+        <AuthorizedRoute
           key={routePath}
           exact
           path={routePath}
+          authority={routeItem.authority}
+          redirectPath="/login"
           component={routeItem.component}
         />
       );

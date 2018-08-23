@@ -53,17 +53,17 @@ export default class Login extends Component {
       <div style={styles.container} className="user-login">
         <div style={styles.header}>
           <a href="#" style={styles.meta}>
-            <img
-              style={styles.logo}
-              // src={require('./images/TB13UQpnYGYBuNjy0FoXXciBFXa-242-134.png')}
-              alt="logo"
-            />
-            <span style={styles.title}>飞冰</span>
+            {/*<img*/}
+              {/*style={styles.logo}*/}
+               {/*src={require('./images/TB13UQpnYGYBuNjy0FoXXciBFXa-242-134.png')}*/}
+              {/*alt="logo"*/}
+            {/*/>*/}
+            <span style={styles.title}></span>
           </a>
-          <p style={styles.desc}>飞冰让前端开发简单而友好</p>
+          {/*<p style={styles.desc}>飞冰让前端开发简单而友好</p>*/}
         </div>
         <div style={styles.formContainer}>
-          <h4 style={styles.formTitle}>登 录</h4>
+          {/*<h4 style={styles.formTitle}>登 录</h4>*/}
           <IceFormBinderWrapper
             value={this.state.value}
             onChange={this.formChange}
@@ -81,7 +81,7 @@ export default class Login extends Component {
                     <Input
                       size="large"
                       maxLength={20}
-                      placeholder="管理员账号"
+                      placeholder="账号"
                     />
                   </IceFormBinder>
                 </Col>
@@ -124,15 +124,15 @@ export default class Login extends Component {
                 </Button>
               </Row>
 
-              <Row className="tips" style={styles.tips}>
-                <a href="/" style={styles.link}>
-                  立即注册
-                </a>
-                <span style={styles.line}>|</span>
-                <a href="/" style={styles.link}>
-                  忘记密码
-                </a>
-              </Row>
+              {/*<Row className="tips" style={styles.tips}>*/}
+                {/*<a href="/" style={styles.link}>*/}
+                  {/*立即注册*/}
+                {/*</a>*/}
+                {/*<span style={styles.line}>|</span>*/}
+                {/*<a href="/" style={styles.link}>*/}
+                  {/*忘记密码*/}
+                {/*</a>*/}
+              {/*</Row>*/}
             </div>
           </IceFormBinderWrapper>
         </div>
