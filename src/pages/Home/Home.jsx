@@ -8,6 +8,7 @@ import {
 } from '@icedesign/form-binder';
 import FormView from '../../components/FormView';
 import './Home.scss';
+import { getToken, setAuthority, setToken } from '../../utils/authority';
 import axios from 'axios';
 import {
   dialogFormConfig,
@@ -47,6 +48,9 @@ class Home extends Component {
   getCount() {
     axios({
       method: 'get',
+      headers: {
+        token: getToken(),
+      },
       url: 'api/count' }).then((response) => {
       const { data } = response;
       this.setState({
@@ -74,18 +78,31 @@ class Home extends Component {
     axios({
       method: 'post',
       url: 'api/getAgencyList',
+      headers: {
+        token: getToken(),
+      },
       data: {
         current: page,
         pageSize: PAGESIZE,
         extension: { opeadd: paginationParams.value },
       } }).then((response) => {
       const { data } = response;
-      this.setState({
-        dataSource: data.records,
-        isTableLoading: false,
-        total: data.total,
-        current: page,
-      });
+      if (data !== undefined) {
+        this.setState({
+          dataSource: data.records,
+          isTableLoading: false,
+          total: data.total,
+          current: page,
+        });
+      } else {
+        setToken('');
+        setAuthority('');
+        this.props.history.push('/login');
+      }
+    }).catch((error) => {
+      setToken('');
+      setAuthority('');
+      this.props.history.push('/login');
     });
     // Fetch().then((data) => {
     //   if (data.code === 200) {
@@ -151,6 +168,9 @@ class Home extends Component {
     });
     axios({
       method: 'get',
+      headers: {
+        token: getToken(),
+      },
       url: 'api/start' }).then(() => {
       this.setState({
         isLoading: false,
@@ -182,6 +202,9 @@ class Home extends Component {
     axios({
       method: 'post',
       url: 'api/extractingAgency',
+      headers: {
+        token: getToken(),
+      },
       data: {
         opeadd: params.value,
         projectname: params.projectName,

@@ -8,6 +8,12 @@ import {
 } from '@icedesign/form-binder';
 import IceIcon from '@icedesign/icon';
 import './Login.scss';
+import axios from 'axios/index';
+import { setAuthority } from '../../utils/authority';
+import { setToken } from '../../utils/authority';
+
+import { getAuthority } from '../../utils/authority';
+import { getToken } from '../../utils/authority';
 
 const { Row, Col } = Grid;
 
@@ -27,6 +33,9 @@ export default class Login extends Component {
         checkbox: false,
       },
     };
+    // if (getAuthority() === 'admin' && getToken() !== '') {
+    //   this.props.history.push('/');
+    // }
   }
 
   formChange = (value) => {
@@ -42,9 +51,26 @@ export default class Login extends Component {
         console.log('errors', errors);
         return;
       }
-      console.log('values:', values);
-      Feedback.toast.success('登录成功');
-      // 登录成功后做对应的逻辑处理
+      // Feedback.toast.success('登录成功');
+      axios({
+        method: 'post',
+        url: 'api/login',
+        data: {
+          username: values.account,
+          password: values.password,
+        } }).then((response) => {
+        const { data } = response;
+        if (data !== '' && data !== undefined) {
+          setToken(data);
+          setAuthority('admin');
+          // alert(JSON.stringify(getToken()));
+          // alert(JSON.stringify(getAuthority()));
+          // 跳转
+          this.props.history.push('/');
+        } else {
+          Feedback.toast.error('用户名或密码错误');
+        }
+      });
     });
   };
 
@@ -53,17 +79,17 @@ export default class Login extends Component {
       <div style={styles.container} className="user-login">
         <div style={styles.header}>
           <a href="#" style={styles.meta}>
-            {/*<img*/}
-              {/*style={styles.logo}*/}
-               {/*src={require('./images/TB13UQpnYGYBuNjy0FoXXciBFXa-242-134.png')}*/}
-              {/*alt="logo"*/}
-            {/*/>*/}
-            <span style={styles.title}></span>
+             <img
+             style={styles.logo}
+             src="favicon.png"
+             alt="logo"
+             />
+            <span style={styles.title} />
           </a>
-          {/*<p style={styles.desc}>飞冰让前端开发简单而友好</p>*/}
+           <p style={styles.desc}>代理机构抽选</p>
         </div>
         <div style={styles.formContainer}>
-          {/*<h4 style={styles.formTitle}>登 录</h4>*/}
+          {/* <h4 style={styles.formTitle}>登 录</h4> */}
           <IceFormBinderWrapper
             value={this.state.value}
             onChange={this.formChange}
@@ -106,13 +132,13 @@ export default class Login extends Component {
                 </Col>
               </Row>
 
-              <Row style={styles.formItem}>
-                <Col>
-                  <IceFormBinder name="checkbox">
-                    <Checkbox style={styles.checkbox}>记住账号</Checkbox>
-                  </IceFormBinder>
-                </Col>
-              </Row>
+              {/*<Row style={styles.formItem}>*/}
+                {/*<Col>*/}
+                  {/*<IceFormBinder name="checkbox">*/}
+                    {/*<Checkbox style={styles.checkbox}>记住账号</Checkbox>*/}
+                  {/*</IceFormBinder>*/}
+                {/*</Col>*/}
+              {/*</Row>*/}
 
               <Row style={styles.formItem}>
                 <Button
@@ -124,15 +150,15 @@ export default class Login extends Component {
                 </Button>
               </Row>
 
-              {/*<Row className="tips" style={styles.tips}>*/}
-                {/*<a href="/" style={styles.link}>*/}
-                  {/*立即注册*/}
-                {/*</a>*/}
-                {/*<span style={styles.line}>|</span>*/}
-                {/*<a href="/" style={styles.link}>*/}
-                  {/*忘记密码*/}
-                {/*</a>*/}
-              {/*</Row>*/}
+              {/* <Row className="tips" style={styles.tips}> */}
+              {/* <a href="/" style={styles.link}> */}
+              {/* 立即注册 */}
+              {/* </a> */}
+              {/* <span style={styles.line}>|</span> */}
+              {/* <a href="/" style={styles.link}> */}
+              {/* 忘记密码 */}
+              {/* </a> */}
+              {/* </Row> */}
             </div>
           </IceFormBinderWrapper>
         </div>
@@ -170,12 +196,11 @@ const styles = {
     fontWeight: '600',
   },
   desc: {
-    margin: '10px 0',
     fontSize: '14px',
     color: 'rgba(0, 0, 0, 0.45)',
   },
   logo: {
-    marginRight: '10px',
+    //marginRight: '10px',
     width: '48px',
   },
   formContainer: {

@@ -10,6 +10,7 @@ import {
   dialogFormConfig,
 } from './const';
 import './View.scss';
+import {getToken, setAuthority, setToken} from '../../utils/authority';
 import axios from 'axios/index';
 
 const { Column } = Table;
@@ -45,6 +46,9 @@ class DeviceModelView extends Component {
     axios({
       method: 'post',
       url: 'api/getExtractingLogList',
+      headers: {
+        'token': getToken(),
+      },
       data: {
         current: page,
         pageSize: PAGESIZE,
@@ -56,6 +60,10 @@ class DeviceModelView extends Component {
         total: data.total,
         current: page,
       });
+    }).catch((error) => {
+      setToken('');
+      setAuthority('');
+      this.props.history.push('/login');
     });
   }
 
@@ -70,6 +78,9 @@ class DeviceModelView extends Component {
     axios({
       method: 'post',
       url: 'api/deleteExtractingLog',
+      headers: {
+        'token': getToken(),
+      },
       data: {
         id: value.extractId,
       } }).then((response) => {
