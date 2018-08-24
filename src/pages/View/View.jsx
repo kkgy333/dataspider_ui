@@ -54,16 +54,21 @@ class DeviceModelView extends Component {
         pageSize: PAGESIZE,
       } }).then((response) => {
       const { data } = response;
-      this.setState({
-        dataSource: data.records,
-        isTableLoading: false,
-        total: data.total,
-        current: page,
-      });
-    }).catch((error) => {
-      setToken('');
-      setAuthority('');
-      this.props.history.push('/login');
+      if (data !== undefined && data !== '') {
+        this.setState({
+          dataSource: data.records,
+          isTableLoading: false,
+          total: data.total,
+          current: page,
+        });
+      } else {
+        setToken('');
+        setAuthority('');
+        setTimeout(() => {
+          // 跳转
+          this.props.history.push('/login');
+        }, 2500);
+      }
     });
   }
 

@@ -13,4 +13,5 @@ export function getToken() {
 
 export function setToken(token) {
   return localStorage.setItem('dataspider-token', token);
+
 }

@@ -1,6 +1,7 @@
 /* eslint react/no-string-refs:0 */
 import React, { Component } from 'react';
-import { Input, Button, Checkbox, Grid, Feedback } from '@icedesign/base';
+import { withRouter } from 'react-router-dom';
+import { Input, Button, Checkbox, Grid, Feedback, Loading } from '@icedesign/base';
 import {
   FormBinderWrapper as IceFormBinderWrapper,
   FormBinder as IceFormBinder,
@@ -16,7 +17,7 @@ import { getAuthority } from '../../utils/authority';
 import { getToken } from '../../utils/authority';
 
 const { Row, Col } = Grid;
-
+@withRouter
 export default class Login extends Component {
   static displayName = 'Login';
 
@@ -31,7 +32,9 @@ export default class Login extends Component {
         account: '',
         password: '',
         checkbox: false,
+
       },
+      isLoading: false,
     };
     // if (getAuthority() === 'admin' && getToken() !== '') {
     //   this.props.history.push('/');
@@ -51,6 +54,10 @@ export default class Login extends Component {
         console.log('errors', errors);
         return;
       }
+
+      this.setState({
+        isLoading: true,
+      });
       // Feedback.toast.success('登录成功');
       axios({
         method: 'post',
@@ -63,10 +70,14 @@ export default class Login extends Component {
         if (data !== '' && data !== undefined) {
           setToken(data);
           setAuthority('admin');
-          // alert(JSON.stringify(getToken()));
-          // alert(JSON.stringify(getAuthority()));
-          // 跳转
-          this.props.history.push('/');
+
+          setTimeout(() => {
+            this.setState({
+              isLoading: false,
+            });
+            // 跳转
+            this.props.history.push('/');
+          }, 3000);
         } else {
           Feedback.toast.error('用户名或密码错误');
         }
@@ -75,94 +86,93 @@ export default class Login extends Component {
   };
 
   render() {
+    const { isLoading } = this.state;
     return (
-      <div style={styles.container} className="user-login">
-        <div style={styles.header}>
-          <a href="#" style={styles.meta}>
-             <img
-             style={styles.logo}
-             src="favicon.png"
-             alt="logo"
-             />
-            <span style={styles.title} />
-          </a>
-           <p style={styles.desc}>代理机构抽选</p>
-        </div>
-        <div style={styles.formContainer}>
-          {/* <h4 style={styles.formTitle}>登 录</h4> */}
-          <IceFormBinderWrapper
-            value={this.state.value}
-            onChange={this.formChange}
-            ref="form"
-          >
-            <div style={styles.formItems}>
-              <Row style={styles.formItem}>
-                <Col style={styles.formItemCol}>
-                  <IceIcon
-                    type="person"
-                    size="small"
-                    style={styles.inputIcon}
-                  />
-                  <IceFormBinder name="account" required message="必填">
-                    <Input
-                      size="large"
-                      maxLength={20}
-                      placeholder="账号"
+      <Loading visible={isLoading} shape="fusion-reactor" tip="正在登录...">
+        <div style={styles.container} className="user-login">
+          <div style={styles.header}>
+            <a href="#" style={styles.meta}>
+              <img
+                style={styles.logo}
+                src="favicon.png"
+                alt="logo"
+              />
+              <span style={styles.title} />
+            </a>
+            <p style={styles.desc}>代理机构抽选</p>
+          </div>
+          <div style={styles.formContainer}>
+            {/* <h4 style={styles.formTitle}>登 录</h4> */}
+            <IceFormBinderWrapper
+              value={this.state.value}
+              onChange={this.formChange}
+              ref="form"
+            >
+              <div style={styles.formItems}>
+                <Row style={styles.formItem}>
+                  <Col style={styles.formItemCol}>
+                    <IceIcon
+                      type="person"
+                      size="small"
+                      style={styles.inputIcon}
                     />
-                  </IceFormBinder>
-                </Col>
-                <Col>
-                  <IceFormError name="account" />
-                </Col>
-              </Row>
-
-              <Row style={styles.formItem}>
-                <Col style={styles.formItemCol}>
-                  <IceIcon type="lock" size="small" style={styles.inputIcon} />
-                  <IceFormBinder name="password" required message="必填">
-                    <Input
-                      size="large"
-                      htmlType="password"
-                      placeholder="密码"
-                    />
-                  </IceFormBinder>
-                </Col>
-                <Col>
-                  <IceFormError name="password" />
-                </Col>
-              </Row>
-
-              {/*<Row style={styles.formItem}>*/}
-                {/*<Col>*/}
-                  {/*<IceFormBinder name="checkbox">*/}
-                    {/*<Checkbox style={styles.checkbox}>记住账号</Checkbox>*/}
-                  {/*</IceFormBinder>*/}
-                {/*</Col>*/}
-              {/*</Row>*/}
-
-              <Row style={styles.formItem}>
-                <Button
-                  type="primary"
-                  onClick={this.handleSubmit}
-                  style={styles.submitBtn}
-                >
-                  登 录
-                </Button>
-              </Row>
-
-              {/* <Row className="tips" style={styles.tips}> */}
-              {/* <a href="/" style={styles.link}> */}
-              {/* 立即注册 */}
-              {/* </a> */}
-              {/* <span style={styles.line}>|</span> */}
-              {/* <a href="/" style={styles.link}> */}
-              {/* 忘记密码 */}
-              {/* </a> */}
-              {/* </Row> */}
-            </div>
-          </IceFormBinderWrapper>
+                    <IceFormBinder name="account" required message="必填">
+                      <Input
+                        size="large"
+                        maxLength={20}
+                        placeholder="账号"
+                      />
+                    </IceFormBinder>
+                  </Col>
+                  <Col>
+                    <IceFormError name="account" />
+                  </Col>
+                </Row>
+                <Row style={styles.formItem}>
+                  <Col style={styles.formItemCol}>
+                    <IceIcon type="lock" size="small" style={styles.inputIcon} />
+                    <IceFormBinder name="password" required message="必填">
+                      <Input
+                        size="large"
+                        htmlType="password"
+                        placeholder="密码"
+                      />
+                    </IceFormBinder>
+                  </Col>
+                  <Col>
+                    <IceFormError name="password" />
+                  </Col>
+                </Row>
+                {/*<Row style={styles.formItem}>*/}
+                  {/*<Col>*/}
+                    {/*<IceFormBinder name="checkbox">*/}
+                      {/*<Checkbox style={styles.checkbox}>记住账号</Checkbox>*/}
+                    {/*</IceFormBinder>*/}
+                  {/*</Col>*/}
+                {/*</Row>*/}
+                <Row style={styles.formItem}>
+                  <Button
+                    type="primary"
+                    onClick={this.handleSubmit}
+                    style={styles.submitBtn}
+                  >
+                    登 录
+                  </Button>
+                </Row>
+                {/* <Row className="tips" style={styles.tips}> */}
+                {/* <a href="/" style={styles.link}> */}
+                {/* 立即注册 */}
+                {/* </a> */}
+                {/* <span style={styles.line}>|</span> */}
+                {/* <a href="/" style={styles.link}> */}
+                {/* 忘记密码 */}
+                {/* </a> */}
+                {/* </Row> */}
+              </div>
+            </IceFormBinderWrapper>
+          </div>
         </div>
-      </div>
+      </Loading>
     );
   }
 }

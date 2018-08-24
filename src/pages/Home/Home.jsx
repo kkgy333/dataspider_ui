@@ -87,7 +87,7 @@ class Home extends Component {
         extension: { opeadd: paginationParams.value },
       } }).then((response) => {
       const { data } = response;
-      if (data !== undefined) {
+      if (data !== undefined && data !== '') {
         this.setState({
           dataSource: data.records,
           isTableLoading: false,
@@ -97,12 +97,11 @@ class Home extends Component {
       } else {
         setToken('');
         setAuthority('');
-        this.props.history.push('/login');
+        setTimeout(() => {
+          // 跳转
+          this.props.history.push('/login');
+        }, 2500);
       }
-    }).catch((error) => {
-      setToken('');
-      setAuthority('');
-      this.props.history.push('/login');
     });
     // Fetch().then((data) => {
     //   if (data.code === 200) {
