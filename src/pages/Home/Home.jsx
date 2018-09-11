@@ -100,7 +100,7 @@ class Home extends Component {
         setTimeout(() => {
           // 跳转
           this.props.history.push('/login');
-        }, 2500);
+        }, 200);
       }
     });
     // Fetch().then((data) => {
@@ -230,6 +230,9 @@ class Home extends Component {
       dialogData: value,
     });
   };
+  onClickOpen = (value) => {
+    window.open('http://www.nmgp.gov.cn/category/dljg?dljgid='+value.ageinsid);
+  };
   onProjectNameChange = (projectNameValue) => {
     this.setState({ projectNameValue });
   }
@@ -245,9 +248,12 @@ class Home extends Component {
 
   renderStatus = (value, index, record) => {
     const view = <a href="javascript:void(0);" target="_blank" onClick={this.onClickView.bind(this, record)}>查看</a>;
+    const open = <a href="javascript:void(0);" target="_blank" onClick={this.onClickOpen.bind(this, record)}>更多信息</a>;
     return (
       <div>
         {view}
+        <span className="actions-split">|</span>
+        {open}
       </div>
     );
   }

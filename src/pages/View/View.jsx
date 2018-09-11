@@ -10,8 +10,9 @@ import {
   dialogFormConfig,
 } from './const';
 import './View.scss';
-import {getToken, setAuthority, setToken} from '../../utils/authority';
+import { getToken, setAuthority, setToken } from '../../utils/authority';
 import axios from 'axios/index';
+
 
 const { Column } = Table;
 const clsPrefix = 'view';
@@ -47,7 +48,7 @@ class DeviceModelView extends Component {
       method: 'post',
       url: 'api/getExtractingLogList',
       headers: {
-        'token': getToken(),
+        token: getToken(),
       },
       data: {
         current: page,
@@ -67,7 +68,7 @@ class DeviceModelView extends Component {
         setTimeout(() => {
           // 跳转
           this.props.history.push('/login');
-        }, 2500);
+        }, 200);
       }
     });
   }
@@ -84,7 +85,7 @@ class DeviceModelView extends Component {
       method: 'post',
       url: 'api/deleteExtractingLog',
       headers: {
-        'token': getToken(),
+        token: getToken(),
       },
       data: {
         id: value.extractId,
@@ -95,6 +96,12 @@ class DeviceModelView extends Component {
         this.getData(this.state.current);
       }
     });
+  };
+
+
+  onClickOpen = (value) => {
+    //window.location.href =
+    window.open('http://www.nmgp.gov.cn/category/dljg?dljgid='+value.ageinsid);
   };
 
   onOk = () => {
@@ -115,12 +122,13 @@ class DeviceModelView extends Component {
 
   renderStatus = (value, index, record) => {
     const view = <a href="javascript:void(0);" target="_blank" onClick={this.onClickView.bind(this, record)}>查看</a>;
-    const deleted = <a href="javascript:void(0);" target="_blank" onClick={this.onClickDelete.bind(this, record)}>删除</a>;
+    // const deleted = <a href="javascript:void(0);" target="_blank" onClick={this.onClickDelete.bind(this, record)}>删除</a>;
+    const open = <a href="javascript:void(0);" target="_blank" onClick={this.onClickOpen.bind(this, record)}>更多信息</a>;
     return (
       <div>
         {view}
         <span className="actions-split">|</span>
-        {deleted}
+        {open}
       </div>
     );
   }

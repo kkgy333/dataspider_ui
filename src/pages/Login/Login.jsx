@@ -77,7 +77,7 @@ export default class Login extends Component {
             });
             // 跳转
             this.props.history.push('/');
-          }, 3000);
+          }, 1000);
         } else {
           Feedback.toast.error('用户名或密码错误');
         }

@@ -14,7 +14,6 @@ const routerConfig = [
     path: '/',
     layout: BaseLayout,
     component: Home,
-    authority: 'admin',
   },
   {
     path: '/login',
@@ -25,7 +24,6 @@ const routerConfig = [
     path: '/view',
     component: View,
     layout: BaseLayout,
-    authority: 'admin',
   },
   {
     path: '/500-with-basic-layout',
